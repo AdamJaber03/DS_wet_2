@@ -553,9 +553,7 @@ int ContestantTree::findHalf(NodeContestants *ptr) {
 
 }
 
-NodeContestants *ContestantTree::findHalf() {
 
-}
 
 
 #include "ContestantTree.h"

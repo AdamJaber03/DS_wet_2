@@ -16,10 +16,22 @@ public:
     pair& operator=(const pair & toCopy);
     T getP1() const;
     S getP2() const;
+    void setP1(T p1);
+    void setP2(S p2);
 private:
     T p1;
     S p2;
 };
+
+template<typename T, typename S>
+void pair<T, S>::setP2(S p2) {
+    this->p2 = p2;
+}
+
+template<typename T, typename S>
+void pair<T, S>::setP1(T p1) {
+    this->p1 = p1;
+}
 
 template<typename T, typename S>
 bool pair<T, S>::operator<=(const pair &toCompare) const{

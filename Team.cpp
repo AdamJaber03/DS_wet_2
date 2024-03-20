@@ -78,7 +78,7 @@ StatusType Team::unite(Team &team2) {
         delete[] team1array;
         return StatusType::ALLOCATION_ERROR;
     }
-    updateId(team2array, id);
+    updateId(team2array, team2.size, size);
     pair<pair<int, int>*, int> merged = merge(team1array, size, team2array, team2.size);
     delete[] team1array;
     delete[] team2array;
@@ -99,5 +99,13 @@ StatusType Team::unite(Team &team2) {
     }
     delete conestants;
     conestants = newTeam;
+    size+=team2.size;
     delete[] merged.getP1();
+}
+
+
+void Team::updateId(pair<int, int> * team2, int size2, int size1){
+    for(int i = 0; i < size2; i++){
+        team2[i].setP2(team2->getP2()+1);
+    }
 }

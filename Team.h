@@ -23,7 +23,7 @@ private:
     int strength;
     int size;
     ContestantTree* conestants;
-    void updateId(pair<int, int> * team2, int id1);
+    void updateId(pair<int, int> * team2, int size2, int size1);
 };
 
 
