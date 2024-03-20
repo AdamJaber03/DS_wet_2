@@ -13,7 +13,10 @@ olympics_t::~olympics_t()
 
 StatusType olympics_t::add_team(int teamId)
 {
-	// TODO: Your code goes here
+    if(teamId <= 0) return StatusType::INVALID_INPUT;
+    StatusType status = hashTeams.insert(teamId);
+    if(status != StatusType::SUCCESS) return status;
+    //TODO : insert to tree
 	return StatusType::SUCCESS;
 }
 
