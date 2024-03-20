@@ -101,4 +101,3 @@ StatusType Team::unite(Team &team2) {
     conestants = newTeam;
     delete[] merged.getP1();
 }
-

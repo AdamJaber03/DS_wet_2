@@ -5,6 +5,7 @@
 #include "wet2util.h"
 #include "Team.h"
 #include <iostream>
+#include "Team.h"
 
 
 class TeamsHashTable{
@@ -21,6 +22,7 @@ private:
     int size;
     avl<int, Team*>* teams;
     int hashFunction(int num) const;
+
     StatusType updateSize();
 };
 

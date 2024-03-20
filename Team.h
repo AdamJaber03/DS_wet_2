@@ -24,7 +24,6 @@ private:
     int size;
     ContestantTree* conestants;
     void updateId(pair<int, int> * team2, int id1);
-
 };
 
 

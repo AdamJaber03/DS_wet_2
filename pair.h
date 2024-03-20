@@ -14,8 +14,8 @@ public:
     bool operator==(const pair &toCompare) const;
     pair(const pair & toCopy): p1(toCopy.p1), p2(toCopy.p2) {};
     pair& operator=(const pair & toCopy);
-    T getP1();
-    S getP2();
+    T getP1() const;
+    S getP2() const;
 private:
     T p1;
     S p2;
@@ -27,14 +27,14 @@ bool pair<T, S>::operator<=(const pair &toCompare) const{
 }
 
 template<typename T, typename S>
-S pair<T, S>::getP2() {
+S pair<T, S>::getP2() const{
     return p2;
 }
 
 template <typename T, typename S>
 bool pair<T, S>::operator<(const pair<T, S> &toCompare) const{
     if (p1 < toCompare.p1) return true;
-    return p1 == toCompare.p1 && p2 < toCompare.p2;
+    return p1 == toCompare.p1 && p2 > toCompare.p2;
 }
 
 template <typename T, typename S>
@@ -55,7 +55,7 @@ pair<T, S>& pair<T, S>::operator=(const pair<T, S> &toCopy) {
 }
 
 template <typename T, typename S>
-T pair<T, S>::getP1() {
+T pair<T, S>::getP1() const {
     return p1;
 }
 
