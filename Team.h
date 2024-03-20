@@ -1,39 +1,29 @@
 //
-// Created by JaberA on 17/03/2024.
+// Created by amir on 17/03/2024.
 //
 
 #ifndef DS_WET_2_TEAM_H
 #define DS_WET_2_TEAM_H
 
-//temp
+#include "ContestantTree.h"
+
 class Team {
+public:
+    Team(int id) : id(id), strength(0), size(0), conestants(nullptr) {};
+    ~Team();
+    int getId();
+    int getStrength();
+    void setStrength(int strength);
+    StatusType insertContestant(int strength);
+    StatusType removeContestant();
+    StatusType unite(Team &team2);
+
 private:
     int id;
-    int power;
-
-public:
-    // Constructor
-    Team(int teamId, int teamPower) : id(teamId), power(teamPower) {}
-
-    // Getter for ID
-    int getId() const {
-        return id;
-    }
-
-    // Setter for ID
-    void setId(int teamId) {
-        id = teamId;
-    }
-
-    // Getter for Power
-    int getPower() const {
-        return power;
-    }
-
-    // Setter for Power
-    void setPower(int teamPower) {
-        power = teamPower;
-    }
+    int strength;
+    int size;
+    ContestantTree* conestants;
+    void updateId(pair<int, int> * team2, int id1);
 };
 
 

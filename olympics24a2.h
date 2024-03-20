@@ -16,12 +16,14 @@
 #define OLYMPICSA2_H_
 
 #include "wet2util.h"
+#include "HashTable.h"
+#include "Team.h"
 
 class olympics_t {
 private:
-	//
-	// Here you may add anything you want
-	//
+    TeamsHashTable hashTeams;
+    TeamsTree teams;
+
 	
 public:
 	// <DO-NOT-MODIFY> {

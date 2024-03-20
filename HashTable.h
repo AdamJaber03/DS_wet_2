@@ -1,9 +1,12 @@
+#ifndef UNTITLED_HASHTABLE_H
+#define UNTITLED_HASHTABLE_H
+
 #include "avl.h"
+#include "wet2util.h"
+#include "Team.h"
 #include <iostream>
 #include "Team.h"
 
-#ifndef UNTITLED_HASHTABEL_H
-#define UNTITLED_HASHTABEL_H
 
 class TeamsHashTable{
 public:
@@ -18,10 +21,11 @@ private:
     int max_size;
     int size;
     avl<int, Team*>* teams;
-    int hashFunction(int num);
+    int hashFunction(int num) const;
+
     StatusType updateSize();
 };
 
 
 
-#endif //UNTITLED_HASHTABEL_H
+#endif //UNTITLED_HASHTABLE_H

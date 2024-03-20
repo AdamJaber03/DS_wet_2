@@ -2,13 +2,14 @@
 #include "Team.h"
 
 
-int TeamsHashTable::hashFunction(int id) {
+
+int TeamsHashTable::hashFunction(int id) const {
     return id%max_size;
 }
 
 StatusType TeamsHashTable::insert(int id) {
     int index = hashFunction(id);
-    Team *newTeam = new Team(id, 0); //todo - define team
+    Team *newTeam = new Team(id); //todo - define team
     StatusType status = teams[index].insert(id, newTeam);
     if(status != StatusType::SUCCESS){
         delete newTeam;
