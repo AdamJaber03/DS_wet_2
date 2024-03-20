@@ -1,5 +1,6 @@
 #include "avl.h"
 #include <iostream>
+#include "Team.h"
 
 #ifndef UNTITLED_HASHTABEL_H
 #define UNTITLED_HASHTABEL_H
@@ -18,7 +19,7 @@ private:
     int size;
     avl<int, Team*>* teams;
     int hashFunction(int num);
-    void updateSize();
+    StatusType updateSize();
 };
 
 
