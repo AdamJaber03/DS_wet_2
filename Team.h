@@ -13,6 +13,7 @@ public:
     ~Team();
     int getId();
     int getStrength();
+    int getSize();
     void setStrength(int strength);
     StatusType insertContestant(int strength);
     StatusType removeContestant();

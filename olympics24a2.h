@@ -17,6 +17,7 @@
 
 #include "wet2util.h"
 #include "HashTable.h"
+#include "TeamsTree.h"
 #include "Team.h"
 #include "TeamsTree.h"
 

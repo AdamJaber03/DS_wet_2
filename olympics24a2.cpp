@@ -16,7 +16,7 @@ StatusType olympics_t::add_team(int teamId)
     //TODO -check invalid
     if(teamId <= 0) return StatusType::INVALID_INPUT;
     Team* team = new Team(teamId);
-    StatusType status = hashTeams.insert(teamId);
+    StatusType status = hashTeams.insert(teamId, team);
     if(status != StatusType::SUCCESS) return status;
     //TODO : insert to tree
 	return StatusType::SUCCESS;
@@ -60,14 +60,22 @@ StatusType olympics_t::add_player(int teamId, int playerStrength)
 
 StatusType olympics_t::remove_newest_player(int teamId)
 {
-	// TODO: Your code goes here
+    if(teamId <= 0) return StatusType::INVALID_INPUT;
+    Team * team = hashTeams.find(teamId);
+    if(!team) return StatusType::FAILURE;
+    StatusType status = team->removeContestant();
+    if(status != StatusType::SUCCESS) return status;
+    if(!team->getSize()) teamsTree.remove(*(new pair<int, int>(0, teamId)));
 	return StatusType::SUCCESS;
 }
 
 output_t<int> olympics_t::play_match(int teamId1, int teamId2)
 {
-    // TODO: Your code goes here
-    return 2008;
+    if(teamId1 <= 0 || teamId2 <= 0 || teamId1 == teamId2) return output_t<int>(StatusType::INVALID_INPUT);
+    Team * team1 = hashTeams.find(teamId1);
+    Team * team2 = hashTeams.find(teamId2);
+    if(!team1 || !team2) return output_t<int>(StatusType::FAILURE);
+    return teamsTree.play_match(*(new pair<int, int>(team1->getStrength(), teamId1)), *(new pair<int, int>(team2->getStrength(), teamId2)));
 }
 
 output_t<int> olympics_t::num_wins_for_team(int teamId)
@@ -85,8 +93,16 @@ output_t<int> olympics_t::get_highest_ranked_team()
 
 StatusType olympics_t::unite_teams(int teamId1, int teamId2)
 {
-	// TODO: Your code goes here
-    return StatusType::SUCCESS;
+    if(teamId1 <= 0 || teamId2 <= 0 || teamId1 == teamId2) return StatusType::INVALID_INPUT;
+    Team * team1 = hashTeams.find(teamId1);
+    Team * team2 = hashTeams.find(teamId2);
+    if(!team1 || !team2) return StatusType::FAILURE;
+    if(team2->getSize() == 0){
+        hashTeams.remove(teamId2);
+        return StatusType::SUCCESS;
+        //TODO: check if a team with strength 0 is in tree
+    }
+    return team1->unite(*team2);
 }
 
 output_t<int> olympics_t::play_tournament(int lowPower, int highPower)

@@ -4,6 +4,7 @@
 
 #include "Team.h"
 #include "pair.h"
+#include "math.h"
 
 pair<pair<int, int>*, int> merge(pair<int, int> *arr1, int size1, pair<int, int> *arr2, int size2){
     pair<int, int>* newList = new pair<int, int>[size1+size2];
@@ -56,13 +57,15 @@ void Team::setStrength(int strength) {
 StatusType Team::insertContestant(int strength) {
     StatusType status = conestants->insert(strength, size + 1);
     if(status == StatusType::SUCCESS) size++;
+    strength = conestants->findHalf(conestants->getRoot(), std::ceil(conestants->getSize()/2) +1)*conestants->getSize();
     return status;
 }
 
 StatusType Team::removeContestant() {
     StatusType status = conestants->remove();
     if(status == StatusType::SUCCESS) size--;
-return status;
+    strength = conestants->findHalf(conestants->getRoot(), std::ceil(conestants->getSize()/2) +1)*conestants->getSize();
+    return status;
 }
 
 StatusType Team::unite(Team &team2) {
@@ -112,4 +115,8 @@ void Team::updateId(pair<int, int> * team2, int size2, int size1){
 
 int Team::getSize() {
     return size;
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes

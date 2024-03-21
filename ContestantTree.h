@@ -25,6 +25,7 @@ public:
     void createEmpty(int size);
     void fillEmpty(pair<int, int> *list);
     void fillByValue(pair<int, int> *list, int &min, int &max);
+    int findHalf(NodeContestants * ptr, int half);
     NodeContestants * getRoot();
 
 private:
@@ -35,7 +36,6 @@ private:
     int findMax();
     int findMin();
     NodeContestants * findAux(int key);
-    int findHalf(NodeContestants * ptr);
     void updateNewestPlayer(NodeContestants * toUpdate);
     void updateSumNodes(NodeContestants * toUpdate);
     void fixTree(NodeContestants * start);

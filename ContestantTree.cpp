@@ -548,8 +548,14 @@ StatusType ContestantTree::remove() {
     return StatusType::SUCCESS;
 }
 
-int ContestantTree::findHalf(NodeContestants *ptr) {
-    if(!ptr) return -1;
+int ContestantTree::findHalf(NodeContestants *ptr, int half) {
+    if(!ptr) return -1; //impossible
+    if(!ptr->getLeft() && half == 1) return ptr->getKey();
+    else if(ptr->getLeft() && ptr->getLeft()->getSumNodes() == half - 1) return ptr->getKey();
+    else if(!ptr->getLeft()) return findHalf(ptr->getRight(), half - 1);
+    else if(ptr->getLeft()->getSumNodes() < half - 1) return findHalf(ptr->getRight(), half - 1 - ptr->getLeft()->getSumNodes());
+    else if(ptr->getLeft()->getSumNodes() > half - 1) return findHalf(ptr->getLeft(), half);
+    else return -1; //impossible
 
 }
 
