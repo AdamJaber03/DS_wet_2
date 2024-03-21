@@ -101,11 +101,15 @@ StatusType Team::unite(Team &team2) {
     conestants = newTeam;
     size+=team2.size;
     delete[] merged.getP1();
+    return StatusType::SUCCESS;
 }
-
 
 void Team::updateId(pair<int, int> * team2, int size2, int size1){
     for(int i = 0; i < size2; i++){
         team2[i].setP2(team2->getP2()+1);
     }
+}
+
+int Team::getSize() {
+    return size;
 }

@@ -18,11 +18,12 @@
 #include "wet2util.h"
 #include "HashTable.h"
 #include "Team.h"
+#include "TeamsTree.h"
 
 class olympics_t {
 private:
     TeamsHashTable hashTeams;
-    TeamsTree teams;
+    TeamsTree teamsTree;
 
 	
 public:

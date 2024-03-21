@@ -7,9 +7,8 @@ int TeamsHashTable::hashFunction(int id) const {
     return id%max_size;
 }
 
-StatusType TeamsHashTable::insert(int id) {
+StatusType TeamsHashTable::insert(int id, Team* newTeam) {
     int index = hashFunction(id);
-    Team *newTeam = new Team(id); //todo - define team
     StatusType status = teams[index].insert(id, newTeam);
     if(status != StatusType::SUCCESS){
         delete newTeam;
@@ -91,5 +90,11 @@ TeamsHashTable::~TeamsHashTable() {
         delete tempList;
     }
     delete[] teams;
+}
+
+Team *TeamsHashTable::find(int id) const {
+    Team** team_p = teams[hashFunction(id)].find(id);
+    if (!team_p) return nullptr;
+    return *team_p;
 }
 

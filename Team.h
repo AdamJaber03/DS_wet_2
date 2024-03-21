@@ -9,7 +9,7 @@
 
 class Team {
 public:
-    Team(int id) : id(id), strength(0), size(0), conestants(nullptr) {};
+    explicit Team(int id) : id(id), strength(0), size(0), conestants(nullptr){};
     ~Team();
     int getId();
     int getStrength();
@@ -17,6 +17,7 @@ public:
     StatusType insertContestant(int strength);
     StatusType removeContestant();
     StatusType unite(Team &team2);
+    int getSize();
 
 private:
     int id;

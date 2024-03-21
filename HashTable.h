@@ -14,8 +14,9 @@ public:
         teams = new avl<int, Team*>[2];
     };
     ~TeamsHashTable(); //TODO : destroy the array after changing to dinamic;
-    StatusType insert(int id);
+    StatusType insert(int id, Team* newTeam);
     StatusType remove(int id);
+    Team* find(int id) const;
 
 private:
     int max_size;
