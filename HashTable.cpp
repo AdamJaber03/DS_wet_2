@@ -82,13 +82,6 @@ StatusType TeamsHashTable::updateSize() {
 }
 
 TeamsHashTable::~TeamsHashTable() {
-    for(int i = 0; i < max_size; i++){
-        pair<int, Team*>* tempList = teams[i].getInorder();
-        for (int j = 0; j < teams[i].getSize(); ++j) {
-            delete tempList[j].getP2();
-        }
-        delete tempList;
-    }
     delete[] teams;
 }
 
@@ -100,5 +93,9 @@ Team *TeamsHashTable::find(int id) const {
 
 int TeamsHashTable::getSize() {
     return size;
+}
+
+avl<int, Team*> TeamsHashTable::getTree(int i) {
+    return teams[i];
 }
 

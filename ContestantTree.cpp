@@ -186,6 +186,7 @@ void ContestantTree::rotateLL(NodeContestants * toFix) {
         else{
             toFix->setNewestPlayer(lrson->getNewestPlayer());
         }
+        if(toFix->getNewestPlayer() < toFix->getValue()) toFix->setNewestPlayer(toFix->getValue());
     }
     else{
         int sumNodes = toFix->getSumNodes();
@@ -196,6 +197,7 @@ void ContestantTree::rotateLL(NodeContestants * toFix) {
     }
     if(lSon->getNewestPlayer() < toFix->getNewestPlayer()) lSon->setNewestPlayer(toFix->getNewestPlayer());
     else lSon->setNewestPlayer(lSon->getLeft()->getNewestPlayer());
+    if(lSon->getNewestPlayer() < lSon->getValue()) lSon->setNewestPlayer(lSon->getValue());
 
     //pside is True if tofix is left son
     if (parent){
@@ -235,7 +237,7 @@ void ContestantTree::rotateRR(NodeContestants * toFix) {
             else toFix->setNewestPlayer(rlson->getNewestPlayer());
         }
         else{
-            toFix->setNewestPlayer(rlson->getNewestPlayer());
+            toFix->getNewestPlayer() < toFix->getValue() ? toFix->setNewestPlayer(toFix->getValue()) : toFix->setNewestPlayer(rlson->getNewestPlayer());
         }
     }
     else{
@@ -246,7 +248,9 @@ void ContestantTree::rotateRR(NodeContestants * toFix) {
         else toFix->setNewestPlayer(toFix->getNewestPlayer());
     }
     if(rSon->getNewestPlayer() < toFix->getNewestPlayer()) rSon->setNewestPlayer(toFix->getNewestPlayer());
-    else rSon->setNewestPlayer(rSon->getRight()->getNewestPlayer());
+    else{
+        rSon->getNewestPlayer() < rSon->getValue() ? rSon->setNewestPlayer(rSon->getValue()) : rSon->setNewestPlayer(rSon->getRight()->getNewestPlayer());;
+    }
 
     //pside is True if tofix is left son
     if (parent){
@@ -285,11 +289,11 @@ void ContestantTree::fixTree(NodeContestants *start) {
     NodeContestants * cur = start;
     while (cur){
         cur->updateHeight();
-        updateNewestPlayer(cur);
-        updateSumNodes(cur);
         int bf = cur->getBf();
 
         if (abs(bf) < 2){
+            updateNewestPlayer(cur);
+            updateSumNodes(cur);
             cur = cur->getParent();
             continue;
         }
@@ -392,12 +396,15 @@ void ContestantTree::updateNewestPlayer(NodeContestants *toUpdate) {
     if(toUpdate->getRight() && toUpdate->getLeft()){
         if(toUpdate->getRight()->getNewestPlayer() > toUpdate->getLeft()->getNewestPlayer()) toUpdate->setNewestPlayer(toUpdate->getRight()->getNewestPlayer());
         else toUpdate->setNewestPlayer(toUpdate->getLeft()->getNewestPlayer());
+        if(toUpdate->getNewestPlayer() < toUpdate->getValue()) toUpdate->setNewestPlayer(toUpdate->getValue());
     }
     else if(toUpdate->getRight()){
         toUpdate->setNewestPlayer(toUpdate->getRight()->getValue());
+        if(toUpdate->getNewestPlayer() < toUpdate->getValue()) toUpdate->setNewestPlayer(toUpdate->getValue());
     }
     else if(toUpdate->getLeft()){
         toUpdate->setNewestPlayer(toUpdate->getLeft()->getNewestPlayer());
+        if(toUpdate->getNewestPlayer() < toUpdate->getValue()) toUpdate->setNewestPlayer(toUpdate->getValue());
     }
     else toUpdate->setNewestPlayer(toUpdate->getValue());
 

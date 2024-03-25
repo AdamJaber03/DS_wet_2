@@ -18,13 +18,13 @@ public:
     StatusType remove(int id);
     Team* find(int id) const;
     int getSize();
+    avl<int, Team*> getTree(int i);
 
 private:
     int max_size;
     int size;
     avl<int, Team*>* teams;
     int hashFunction(int num) const;
-
     StatusType updateSize();
 };
 

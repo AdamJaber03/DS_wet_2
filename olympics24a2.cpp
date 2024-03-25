@@ -2,12 +2,20 @@
 
 olympics_t::olympics_t()
 {
-	// TODO: Your code goes here
+    hashTeams = TeamsHashTable();
+    teamsTree = TeamsTree();
 }
 
 olympics_t::~olympics_t()
 {
-	// TODO: Your code goes here
+    for(int i = 0; i < hashTeams.getSize(); i++){
+        avl<int, Team*> treeToRemove = hashTeams.getTree(i);
+        pair<int, Team*>* tempList = treeToRemove.getInorder();
+        for (int j = 0; j < treeToRemove.getSize(); ++j) {
+            delete tempList[j].getP2();
+        }
+        delete[] tempList;
+    }
 }
 
 
