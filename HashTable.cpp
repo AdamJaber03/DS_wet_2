@@ -10,12 +10,12 @@ int TeamsHashTable::hashFunction(int id) const {
 StatusType TeamsHashTable::insert(int id, Team* newTeam) {
     int index = hashFunction(id);
     StatusType status = teams[index].insert(id, newTeam);
-    if(status != StatusType::SUCCESS){
-        delete newTeam;
-        return status;
-    }
+    if(status != StatusType::SUCCESS) return status;
     size++;
-    updateSize();
+    status = updateSize();
+    if (status != StatusType::SUCCESS){
+        teams[index].remove(id);
+    }
     return status;
 }
 
@@ -96,5 +96,9 @@ Team *TeamsHashTable::find(int id) const {
     Team** team_p = teams[hashFunction(id)].find(id);
     if (!team_p) return nullptr;
     return *team_p;
+}
+
+int TeamsHashTable::getSize() {
+    return size;
 }
 

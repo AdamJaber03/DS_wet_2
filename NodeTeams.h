@@ -45,7 +45,7 @@ private:
     NodeTeams * left;
     NodeTeams * right;
     NodeTeams * parent;
-    static int max3(int num1, int num2, int num3);
+//    static int max3(int num1, int num2, int num3);
 };
 
 

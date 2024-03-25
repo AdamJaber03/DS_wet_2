@@ -17,6 +17,7 @@ public:
     StatusType insert(int id, Team* newTeam);
     StatusType remove(int id);
     Team* find(int id) const;
+    int getSize();
 
 private:
     int max_size;

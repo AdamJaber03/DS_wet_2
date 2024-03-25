@@ -456,6 +456,7 @@ StatusType TeamsTree::playTournament(int lowPower, int highPower) {
     //at this point highest should contain the greatest node with power up to highPower
 
     int numTeams = getIndex(highest->getKey()) - getIndex(lowest->getKey()) + 1;
+    if (numTeams <= 1) return StatusType::FAILURE;  // if no tems in tournment or only 1 team
     if ((numTeams & (numTeams - 1)) != 0) return StatusType::FAILURE;       //check if power of 2 with bitwise and. powers of two are 1000...
     int startInd = getIndex(lowest->getKey());
     while (numTeams/2){
@@ -485,7 +486,7 @@ void TeamsTree::findIndexUpdateMedals(int index, int numMedals) {
         }
     }
     //fix max on route from index to root, only for those nodes there was a change in maxPower in their subtree
-    fixMaxSubTree(current);
+    fixMaxSubTree(current->getRight()? current->getRight(): current);
 }
 
 int TeamsTree::NumWins(const pair<int, int>& key) {
