@@ -34,6 +34,7 @@ public:
     Team* getValue();
     int getMaxPowerSubTree() const;
     void updateMaxPowerSubTree();
+    void setHeight(int newHeight);
 
 private:
     pair<int, int> key;

@@ -30,6 +30,8 @@ public:
     void updateHeight();
     int getBf();
     int getValue();
+    void setHeight(int newHeight);
+    void fixNewestPlayer();
 
 private:
     int key;

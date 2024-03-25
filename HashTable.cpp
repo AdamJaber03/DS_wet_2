@@ -33,7 +33,10 @@ StatusType TeamsHashTable::updateSize() {
         max_size*=2;
         avl<int, Team*>* newlist = nullptr;
         try {
-            newlist = new avl<int, Team*>[max_size];
+            newlist = new avl<int, Team*>[max_size]();
+//            for (int i = 0; i < max_size; ++i) {
+//                newlist[i] = * new avl<int, Team*>();
+//            }
         }catch (std::bad_alloc&){
             max_size /= 2;
             return StatusType::ALLOCATION_ERROR;
@@ -50,14 +53,18 @@ StatusType TeamsHashTable::updateSize() {
             }
             delete tempList;
         }
-        delete teams;
+        //TODO - fix leaks start here
+        delete[] teams;
         teams = newlist;
     }
     else if(size == max_size/4){
         max_size/=2;
         avl<int, Team*>* newlist = nullptr;
         try {
-            newlist = new avl<int, Team*>[max_size];
+            newlist = new avl<int, Team*>[max_size]();
+//            for (int i = 0; i < max_size; ++i) {
+//                newlist[i] = * new avl<int, Team*>();
+//            }
         }catch (std::bad_alloc&){
             max_size *= 2;
             return StatusType::ALLOCATION_ERROR;
@@ -75,13 +82,16 @@ StatusType TeamsHashTable::updateSize() {
             }
             delete tempList;
         }
-        delete teams;
+        delete[] teams;
         teams = newlist;
     }
     return StatusType::SUCCESS;
 }
 
 TeamsHashTable::~TeamsHashTable() {
+//    for (int i = 0; i < max_size; ++i) {
+//        delete &teams[i];       //TODO - this might be a problem
+//    }
     delete[] teams;
 }
 
@@ -91,7 +101,7 @@ Team *TeamsHashTable::find(int id) const {
     return *team_p;
 }
 
-int TeamsHashTable::getSize() {
+int TeamsHashTable::getSize() const {
     return size;
 }
 

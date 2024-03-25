@@ -37,9 +37,11 @@ void TeamsTree::removeTailAux(int &i, NodeTeams *cur) {
             cur->getParent()->setLeft(nullptr);
         }
         delete cur;
+        cur = nullptr;
         i--;
     }
     removeTailAux(i, left);
+    if (cur) cur->updateHeight();
 }
 
 void TeamsTree::removeTail(int i) {
@@ -80,6 +82,7 @@ void TeamsTree::createEmptyAux(NodeTeams* parent, int height){
     right->setParent(parent);
     parent->setLeft(left);
     parent->setRight(right);
+    parent->setHeight(height);
     createEmptyAux(parent->getLeft(), height - 1);
     createEmptyAux(parent->getRight(), height - 1);
 }
@@ -192,7 +195,7 @@ void TeamsTree::rotateLL(NodeTeams * toFix) {
     NodeTeams * lrson = lSon->getRight();
 
     // rotation medals correction
-    int toFixMedals = NumWins(toFix->getKey()), lSonMedals = NumWins(lSon->getKey());
+    int toFixMedals = toFix->getMedals(), lSonMedals = lSon->getMedals();
     toFix->updateMedals(-(toFixMedals + lSonMedals));
     lSon->updateMedals(toFixMedals);
     if (lrson) lrson->updateMedals(lSonMedals);
@@ -216,6 +219,7 @@ void TeamsTree::rotateLL(NodeTeams * toFix) {
     lSon->setRight(toFix);
     toFix->setParent(lSon);
 
+    if (lrson) lrson->updateMaxPowerSubTree();
     toFix->updateHeight();
     toFix->updateSubTreeSize();
     toFix->updateMaxPowerSubTree();
@@ -229,7 +233,7 @@ void TeamsTree::rotateRR(NodeTeams * toFix) {
     NodeTeams * rlson = rSon->getLeft();
 
     // rotation medals correction
-    int toFixMedals = NumWins(toFix->getKey()), rSonMedals = NumWins(rSon->getKey());
+    int toFixMedals = toFix->getMedals(), rSonMedals = rSon->getMedals();
     toFix->updateMedals(-(toFixMedals + rSonMedals));
     rSon->updateMedals(toFixMedals);
     if (rlson) rlson->updateMedals(rSonMedals);
@@ -248,11 +252,12 @@ void TeamsTree::rotateRR(NodeTeams * toFix) {
     rSon->setParent(parent);
 
     toFix->setRight(rlson);
-    if (rlson) rlson->setParent(toFix);
+    if (rlson)rlson->setParent(toFix);
 
     rSon->setLeft(toFix);
     toFix->setParent(rSon);
 
+    if (rlson) rlson->updateMaxPowerSubTree();
     toFix->updateHeight();
     toFix->updateSubTreeSize();
     toFix->updateMaxPowerSubTree();
@@ -429,7 +434,7 @@ pair<int, int> TeamsTree::getMin() {
     return minKey;
 }
 
-StatusType TeamsTree::playTournament(int lowPower, int highPower) {
+output_t<int> TeamsTree::playTournament(int lowPower, int highPower) {
     //TODO - check this algorithem i think there are small mistakes here
     NodeTeams *lowest = nullptr;
     NodeTeams *current = root;
@@ -450,22 +455,25 @@ StatusType TeamsTree::playTournament(int lowPower, int highPower) {
             highest = current;
             current = current->getRight();
         } else{
-            current = current->getRight();
+            current = current->getLeft();
         }
     }
+    if (!highest || !lowest) return StatusType::FAILURE;
     //at this point highest should contain the greatest node with power up to highPower
 
     int numTeams = getIndex(highest->getKey()) - getIndex(lowest->getKey()) + 1;
     if (numTeams <= 1) return StatusType::FAILURE;  // if no tems in tournment or only 1 team
     if ((numTeams & (numTeams - 1)) != 0) return StatusType::FAILURE;       //check if power of 2 with bitwise and. powers of two are 1000...
     int startInd = getIndex(lowest->getKey());
+    int tot_medals = 0;
     while (numTeams/2){
+        tot_medals += 1;
         numTeams /= 2;
         findIndexUpdateMedals(startInd + numTeams - 1, 1);
         startInd += numTeams;
     }
-    findIndexUpdateMedals(startInd, -3);    //fix medals for everyone greater then highest
-    return StatusType::SUCCESS;
+    findIndexUpdateMedals(startInd, -tot_medals);    //fix medals for everyone greater then highest
+    return highest->getKey().getP2();
 }
 
 void TeamsTree::findIndexUpdateMedals(int index, int numMedals) {

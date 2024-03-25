@@ -57,11 +57,12 @@ void Team::setStrength(int strength) {
 StatusType Team::insertContestant(int strength) {
     StatusType status = conestants->insert(strength, size + 1);
     if(status == StatusType::SUCCESS) size++;
-    strength = conestants->findHalf(conestants->getRoot(), std::ceil(conestants->getSize()/2) +1)*conestants->getSize();
+    this->strength = conestants->findHalf(conestants->getRoot(), std::ceil(conestants->getSize()/2) +1)*conestants->getSize();
     return status;
 }
 
 StatusType Team::removeContestant() {
+    if (!size) return StatusType::FAILURE;
     StatusType status = conestants->remove();
     if(status == StatusType::SUCCESS) size--;
     strength = conestants->findHalf(conestants->getRoot(), std::ceil(conestants->getSize()/2) +1)*conestants->getSize();
@@ -104,12 +105,13 @@ StatusType Team::unite(Team &team2) {
     conestants = newTeam;
     size+=team2.size;
     delete[] merged.getP1();
+    this->strength = conestants->findHalf(conestants->getRoot(), std::ceil(conestants->getSize()/2) +1)*conestants->getSize();
     return StatusType::SUCCESS;
 }
 
 void Team::updateId(pair<int, int> * team2, int size2, int size1){
     for(int i = 0; i < size2; i++){
-        team2[i].setP2(team2->getP2()+1);
+        team2[i].setP2(team2[i].getP2() + size1);
     }
 }
 
@@ -119,4 +121,12 @@ int Team::getSize() {
 
 int Team::getMedals() {
     return medals;
+}
+
+void Team::setMedals(int newMedals) {
+    medals = newMedals;
+}
+
+Team::~Team() {
+    delete conestants;
 }

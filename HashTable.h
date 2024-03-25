@@ -11,13 +11,16 @@
 class TeamsHashTable{
 public:
     TeamsHashTable() : max_size(2), size(0), teams(nullptr){
-        teams = new avl<int, Team*>[2];
+        teams = new avl<int, Team*>[2]();
+//        for (int i = 0; i < 2; ++i) {
+//            teams[i] = * new avl<int, Team*>();
+//        }
     };
     ~TeamsHashTable(); //TODO : destroy the array after changing to dinamic;
     StatusType insert(int id, Team* newTeam);
     StatusType remove(int id);
     Team* find(int id) const;
-    int getSize();
+    int getSize() const;
     avl<int, Team*> getTree(int i);
 
 private:

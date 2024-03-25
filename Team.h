@@ -9,8 +9,8 @@
 
 class Team {
 public:
-    explicit Team(int id) : id(id), strength(0), size(0), medals(0), conestants(){};
-    ~Team()=default;
+    explicit Team(int id) : id(id), strength(0), size(0), medals(0), conestants(new ContestantTree()){};
+    ~Team();
     int getId();
     int getStrength();
     int getSize();
@@ -18,8 +18,8 @@ public:
     StatusType insertContestant(int strength);
     StatusType removeContestant();
     StatusType unite(Team &team2);
-    int getSize();
     int getMedals();
+    void setMedals(int newMedals);
 
 private:
     int id;

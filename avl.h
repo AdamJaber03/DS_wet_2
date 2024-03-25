@@ -92,9 +92,11 @@ void avl<T, S>::removeTailAux(int &i, node<T, S> *cur) {
             cur->getParent()->setLeft(nullptr);
         }
         delete cur;
+        cur = nullptr;
         i--;
     }
     removeTailAux(i, left);
+    if (cur) cur->updateHeight();
 }
 
 template<typename T, typename S>
@@ -140,6 +142,7 @@ void avl<T, S>::createEmptyAux(node<T, S>* parent, int height){
     right->setParent(parent);
     parent->setLeft(left);
     parent->setRight(right);
+    parent->setHeight(height);
     createEmptyAux(parent->getLeft(), height - 1);
     createEmptyAux(parent->getRight(), height - 1);
 }

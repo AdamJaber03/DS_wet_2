@@ -23,6 +23,7 @@ public:
     void updateHeight();
     int getBf();
     S& getValue();
+    void setHeight(int newHeight);
 
 private:
     T key;
@@ -32,6 +33,11 @@ private:
     node * right;
     node * parent;
 };
+
+template<typename T, typename S>
+void node<T, S>::setHeight(int newHeight) {
+    height = newHeight;
+}
 
 template<typename T, typename S>
 void node<T, S>::setValue(S value) {

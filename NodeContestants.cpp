@@ -64,7 +64,7 @@ int NodeContestants::getValue() {
 #include "NodeContestants.h"
 
 int NodeContestants::getNewestPlayer() {
-    return getNewestPlayer();
+    return newestPlayer;
 }
 
 int NodeContestants::getSumNodes() {
@@ -77,4 +77,15 @@ void NodeContestants::setNewestPlayer(int newestPlayer) {
 
 void NodeContestants::setSumNodes(int sumNodes) {
     this->sumNodes = sumNodes;
+}
+
+void NodeContestants::setHeight(int newHeight) {
+    height = newHeight;
+}
+
+void NodeContestants::fixNewestPlayer() {
+    int curMax = value;
+    if (left && left->getNewestPlayer() > curMax) curMax = left->getNewestPlayer();
+    if (right && right->getNewestPlayer() > curMax) curMax = right->getNewestPlayer();
+    newestPlayer = curMax;
 }

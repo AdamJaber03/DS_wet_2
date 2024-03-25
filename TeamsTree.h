@@ -12,7 +12,7 @@ public:
     StatusType insert(pair<int, int> key, Team* value, int teamMedals=0);      //pair of power and id, value is team object
     StatusType remove(pair<int, int> & key);       //pair of power and id
     Team * find(pair<int, int> & key);
-    StatusType playTournament(int lowPower, int highPower);
+    output_t<int> playTournament(int lowPower, int highPower);
     output_t<int> play_match(pair<int, int> team1, pair<int, int> team2);
     void changeUnique();
     pair<int, int> getMax();

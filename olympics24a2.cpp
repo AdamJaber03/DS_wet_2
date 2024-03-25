@@ -1,9 +1,7 @@
 #include "olympics24a2.h"
 
-olympics_t::olympics_t()
+olympics_t::olympics_t(): hashTeams(TeamsHashTable()), teamsTree(TeamsTree())
 {
-    hashTeams = TeamsHashTable();
-    teamsTree = TeamsTree();
 }
 
 olympics_t::~olympics_t()
@@ -76,9 +74,16 @@ StatusType olympics_t::remove_newest_player(int teamId)
     if(teamId <= 0) return StatusType::INVALID_INPUT;
     Team * team = hashTeams.find(teamId);
     if(!team) return StatusType::FAILURE;
+    pair<int, int> oldKey(team->getStrength(), teamId);
     StatusType status = team->removeContestant();
+    pair<int, int> newKey(team->getStrength(), teamId);
     if(status != StatusType::SUCCESS) return status;
-    if(!team->getSize()) teamsTree.remove(*(new pair<int, int>(0, teamId)));
+    int medals = teamsTree.NumWins(oldKey);
+    teamsTree.remove(oldKey);
+    team->setMedals(medals);
+    if (team->getSize()){
+        teamsTree.insert(newKey, team, medals);
+    }
 	return StatusType::SUCCESS;
 }
 
@@ -87,7 +92,7 @@ output_t<int> olympics_t::play_match(int teamId1, int teamId2)
     if(teamId1 <= 0 || teamId2 <= 0 || teamId1 == teamId2) return output_t<int>(StatusType::INVALID_INPUT);
     Team * team1 = hashTeams.find(teamId1);
     Team * team2 = hashTeams.find(teamId2);
-    if(!team1 || !team2) return output_t<int>(StatusType::FAILURE);
+    if(!team1 || !team2 || !team1->getSize() || !team2->getSize()) return output_t<int>(StatusType::FAILURE);
     return teamsTree.play_match(*(new pair<int, int>(team1->getStrength(), teamId1)), *(new pair<int, int>(team2->getStrength(), teamId2)));
 }
 
@@ -115,12 +120,25 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
     Team * team1 = hashTeams.find(teamId1);
     Team * team2 = hashTeams.find(teamId2);
     if(!team1 || !team2) return StatusType::FAILURE;
+    pair<int, int> team2Key(team2->getStrength(), teamId2), team1oldKey(team1->getStrength(), teamId1);
+    hashTeams.remove(teamId2);
     if(team2->getSize() == 0){
-        hashTeams.remove(teamId2);
+        delete team2;
         return StatusType::SUCCESS;
-        //TODO: check if a team with strength 0 is in tree
     }
-    return team1->unite(*team2);
+    teamsTree.remove(team2Key);
+    if (team1->getSize()){
+        team1->setMedals(teamsTree.NumWins(team1oldKey));
+        teamsTree.remove(team1oldKey);
+    }
+    StatusType status = team1->unite(*team2);
+    pair<int, int> team1newKey(team1->getStrength(), teamId1);
+    if (team1->getSize()){
+        teamsTree.insert(team1newKey, team1, team1->getMedals());
+    }
+    if (status != StatusType::SUCCESS) return status;
+    delete team2;
+    return StatusType::SUCCESS;
 }
 
 output_t<int> olympics_t::play_tournament(int lowPower, int highPower)

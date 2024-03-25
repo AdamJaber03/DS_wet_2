@@ -3,6 +3,7 @@
 //
 
 #include "ContestantTree.h"
+#include <cmath>
 
 NodeContestants *ContestantTree::getRoot() {
     return root;
@@ -40,9 +41,11 @@ void ContestantTree::removeTailAux(int &i, NodeContestants *cur) {
             cur->getParent()->setLeft(nullptr);
         }
         delete cur;
+        cur = nullptr;
         i--;
     }
     removeTailAux(i, left);
+    if (cur) cur->updateHeight();
 }
 
 void ContestantTree::removeTail(int i) {
@@ -73,6 +76,8 @@ void ContestantTree::fillEmptyAux(NodeContestants * cur, pair<int, int> * list, 
     cur->setValue(list[i].getP2());
     i++;
     fillEmptyAux(cur->getRight(), list, i);
+    cur->fixNewestPlayer();
+    updateSumNodes(cur);
 }
 
 void ContestantTree::createEmptyAux(NodeContestants * parent, int height){
@@ -83,6 +88,7 @@ void ContestantTree::createEmptyAux(NodeContestants * parent, int height){
     right->setParent(parent);
     parent->setLeft(left);
     parent->setRight(right);
+    parent->setHeight(height);
     createEmptyAux(parent->getLeft(), height - 1);
     createEmptyAux(parent->getRight(), height - 1);
 }
@@ -177,27 +183,14 @@ void ContestantTree::rotateLL(NodeContestants * toFix) {
     //update fields:
     if(lrson){
         int sumNodes = toFix->getSumNodes();
-        toFix->setSumNodes(toFix->getSumNodes() - (lSon->getSumNodes() - lSon->getRight()->getSumNodes()));
+        toFix->setSumNodes(toFix->getSumNodes() - (lSon->getSumNodes() - lrson->getSumNodes()));
         lSon->setSumNodes(sumNodes);
-        if(toFix->getRight()){ //update toFix newest player
-            if(toFix->getRight()->getNewestPlayer() > lrson->getNewestPlayer()) toFix->setNewestPlayer(toFix->getRight()->getNewestPlayer());
-            else toFix->setNewestPlayer(lrson->getNewestPlayer());
-        }
-        else{
-            toFix->setNewestPlayer(lrson->getNewestPlayer());
-        }
-        if(toFix->getNewestPlayer() < toFix->getValue()) toFix->setNewestPlayer(toFix->getValue());
     }
     else{
         int sumNodes = toFix->getSumNodes();
         toFix->setSumNodes(toFix->getSumNodes() - lSon->getSumNodes());
         lSon->setSumNodes(sumNodes);
-        if(toFix->getRight()) toFix->setNewestPlayer(toFix->getRight()->getNewestPlayer());
-        else toFix->setNewestPlayer(toFix->getNewestPlayer());
     }
-    if(lSon->getNewestPlayer() < toFix->getNewestPlayer()) lSon->setNewestPlayer(toFix->getNewestPlayer());
-    else lSon->setNewestPlayer(lSon->getLeft()->getNewestPlayer());
-    if(lSon->getNewestPlayer() < lSon->getValue()) lSon->setNewestPlayer(lSon->getValue());
 
     //pside is True if tofix is left son
     if (parent){
@@ -221,6 +214,9 @@ void ContestantTree::rotateLL(NodeContestants * toFix) {
     toFix->updateHeight();
     lSon->updateHeight();
 
+    toFix->fixNewestPlayer();
+    lSon->fixNewestPlayer();
+
 }
 
 void ContestantTree::rotateRR(NodeContestants * toFix) {
@@ -230,26 +226,13 @@ void ContestantTree::rotateRR(NodeContestants * toFix) {
     //update fields:
     if(rlson){
         int sumNodes = toFix->getSumNodes();
-        toFix->setSumNodes(toFix->getSumNodes() - (rSon->getSumNodes() - rSon->getLeft()->getSumNodes()));
+        toFix->setSumNodes(toFix->getSumNodes() - (rSon->getSumNodes() - rlson->getSumNodes()));
         rSon->setSumNodes(sumNodes);
-        if(toFix->getLeft()){ //update toFix newest player
-            if(toFix->getLeft()->getNewestPlayer() > rlson->getNewestPlayer()) toFix->setNewestPlayer(toFix->getLeft()->getNewestPlayer());
-            else toFix->setNewestPlayer(rlson->getNewestPlayer());
-        }
-        else{
-            toFix->getNewestPlayer() < toFix->getValue() ? toFix->setNewestPlayer(toFix->getValue()) : toFix->setNewestPlayer(rlson->getNewestPlayer());
-        }
     }
     else{
         int sumNodes = toFix->getSumNodes();
         toFix->setSumNodes(toFix->getSumNodes() - rSon->getSumNodes());
         rSon->setSumNodes(sumNodes);
-        if(toFix->getLeft()) toFix->setNewestPlayer(toFix->getLeft()->getNewestPlayer());
-        else toFix->setNewestPlayer(toFix->getNewestPlayer());
-    }
-    if(rSon->getNewestPlayer() < toFix->getNewestPlayer()) rSon->setNewestPlayer(toFix->getNewestPlayer());
-    else{
-        rSon->getNewestPlayer() < rSon->getValue() ? rSon->setNewestPlayer(rSon->getValue()) : rSon->setNewestPlayer(rSon->getRight()->getNewestPlayer());;
     }
 
     //pside is True if tofix is left son
@@ -273,6 +256,9 @@ void ContestantTree::rotateRR(NodeContestants * toFix) {
 
     toFix->updateHeight();
     rSon->updateHeight();
+
+    toFix->fixNewestPlayer();
+    rSon->fixNewestPlayer();
 }
 
 void ContestantTree::rotateLR(NodeContestants * toFix) {
@@ -289,11 +275,11 @@ void ContestantTree::fixTree(NodeContestants *start) {
     NodeContestants * cur = start;
     while (cur){
         cur->updateHeight();
+        updateNewestPlayer(cur);
+        updateSumNodes(cur);
         int bf = cur->getBf();
 
         if (abs(bf) < 2){
-            updateNewestPlayer(cur);
-            updateSumNodes(cur);
             cur = cur->getParent();
             continue;
         }
@@ -408,6 +394,7 @@ void ContestantTree::updateNewestPlayer(NodeContestants *toUpdate) {
     }
     else toUpdate->setNewestPlayer(toUpdate->getValue());
 
+
 }
 
 void ContestantTree::updateSumNodes(NodeContestants *toUpdate) {
@@ -415,13 +402,12 @@ void ContestantTree::updateSumNodes(NodeContestants *toUpdate) {
         toUpdate->setSumNodes(toUpdate->getRight()->getSumNodes() + toUpdate->getLeft()->getSumNodes() + 1);
     }
     else if(toUpdate->getRight()){
-        toUpdate->setNewestPlayer(toUpdate->getRight()->getSumNodes() + 1);
+        toUpdate->setSumNodes(toUpdate->getRight()->getSumNodes() + 1);
     }
     else if(toUpdate->getLeft()){
-        toUpdate->setNewestPlayer(toUpdate->getLeft()->getSumNodes() + 1);
+        toUpdate->setSumNodes(toUpdate->getLeft()->getSumNodes() + 1);
     }
-    else toUpdate->setNewestPlayer(1);
-
+    else toUpdate->setSumNodes(1);
 }
 
 
@@ -464,7 +450,7 @@ int ContestantTree::getMin() {
 
 NodeContestants * ContestantTree::strengthNewestPlayer(NodeContestants * ptr, int id) {
     if(!ptr->getRight() && !ptr->getLeft()) return nullptr;
-    if(ptr->getRight()->getValue() == id || ptr->getLeft()->getValue()) return ptr;
+    if((ptr->getRight() && ptr->getRight()->getValue() == id) || (ptr->getLeft() && ptr->getLeft()->getValue() == id)) return ptr;
     if(ptr->getRight() && ptr->getRight()->getNewestPlayer() == id) return strengthNewestPlayer(ptr->getRight(), id);
     else return strengthNewestPlayer(ptr->getLeft(), id);
 }
