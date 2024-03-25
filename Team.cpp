@@ -115,8 +115,8 @@ void Team::updateId(pair<int, int> * team2, int size2, int size1){
 
 int Team::getSize() {
     return size;
-<<<<<<< Updated upstream
 }
-=======
+
+int Team::getMedals() {
+    return medals;
 }
->>>>>>> Stashed changes
