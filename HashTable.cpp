@@ -47,7 +47,8 @@ StatusType TeamsHashTable::updateSize() {
                 StatusType status = newlist[hashFunction(tempList[j].getP1())].insert(tempList[j].getP1(), tempList[j].getP2());
                 if (status != StatusType::SUCCESS){
                     max_size /= 2;
-                    delete newlist;
+                    delete[] tempList;
+                    delete[] newlist;
                     return status;
                 }
             }
@@ -75,12 +76,12 @@ StatusType TeamsHashTable::updateSize() {
                 StatusType status = newlist[hashFunction(tempList[j].getP1())].insert(tempList[j].getP1(), tempList[j].getP2());
                 if (status != StatusType::SUCCESS){
                     max_size *= 2;
-                    delete tempList;
-                    delete newlist;
+                    delete[] tempList;
+                    delete[] newlist;
                     return status;
                 }
             }
-            delete tempList;
+            delete[] tempList;
         }
         delete[] teams;
         teams = newlist;
