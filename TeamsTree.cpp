@@ -374,18 +374,17 @@ StatusType TeamsTree::remove(pair<int, int> &key) {
         NodeTeams * smlParent = curSmall->getParent(), *smlrSon = curSmall->getRight();
 
         // This is Medals correctness algorithm in removal
-        int toRemoveMedals = toRemove->getMedals(), curSmallMedals = curSmall->getMedals();
-        toRemove->updateMedals(curSmallMedals - toRemoveMedals);
-        if (!first){
-            rson->updateMedals(toRemoveMedals - curSmallMedals);
-            rson->updateMaxPowerSubTree();
-        }
-        lson->updateMedals(toRemoveMedals - curSmallMedals);
+        int toRemoveWins = NumWins(key), curSmallWins = NumWins(curSmall->getKey());
+        toRemove->updateMedals(curSmallWins - toRemoveWins);
+        rson->updateMedals(toRemoveWins - curSmallWins);
+        rson->updateMaxPowerSubTree();
+        lson->updateMedals(toRemoveWins - curSmallWins);
         lson->updateMaxPowerSubTree();
         if (smlrSon){
-            smlrSon->updateMedals(curSmallMedals);
+            smlrSon->updateMedals(curSmall->getMedals());
             smlrSon->updateMaxPowerSubTree();
         }
+
 
         delete curSmall;
         toRemove->setKey(tempKey);
