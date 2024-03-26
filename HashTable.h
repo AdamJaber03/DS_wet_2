@@ -21,7 +21,8 @@ public:
     StatusType remove(int id);
     Team* find(int id) const;
     int getSize() const;
-    avl<int, Team*> getTree(int i);
+    avl<int, Team*>* getTeams();
+    int getMaxSize() const;
 
 private:
     int max_size;

@@ -125,11 +125,12 @@ StatusType ContestantTree::insert(int key, int value) {
         minKey = root->getKey();
         return StatusType::SUCCESS;
     }
-    if(find(key)){
-        delete newNode;
-        return StatusType::FAILURE;
-    }
-    NodeContestants * parent = findAux(key);
+    // this section is commented out to allow for multiple contestants with the same power
+//    if(find(key)){
+//        delete newNode;
+//        return StatusType::FAILURE;
+//    }
+    NodeContestants * parent = findAuxInsert(key);
     if (key < parent->getKey()){
         parent->setLeft(newNode);
     } else {
@@ -154,6 +155,21 @@ NodeContestants *ContestantTree::findAux(int key) {
         if (cur->getKey() == key){
             return parent;
         }
+        if (key < cur->getKey()){
+            parent = cur;
+            cur = cur->getLeft();
+        } else{
+            parent = cur;
+            cur = cur->getRight();
+        }
+    }
+    return parent;
+}
+
+
+NodeContestants *ContestantTree::findAuxInsert(int key) {
+    NodeContestants * cur = root, *parent = nullptr;
+    while (cur){
         if (key < cur->getKey()){
             parent = cur;
             cur = cur->getLeft();
@@ -194,7 +210,12 @@ void ContestantTree::rotateLL(NodeContestants * toFix) {
 
     //pside is True if tofix is left son
     if (parent){
-        bool pside = toFix->getParent()->getKey() > toFix->getKey();
+        bool pside;
+        if (toFix->getParent()->getLeft() && toFix->getParent()->getLeft()->getValue() == toFix->getValue()){
+            pside = true;
+        }else{
+            pside = false;
+        }
         if (pside){
             parent->setLeft(lSon);
         } else{
@@ -237,7 +258,12 @@ void ContestantTree::rotateRR(NodeContestants * toFix) {
 
     //pside is True if tofix is left son
     if (parent){
-        bool pside = toFix->getParent()->getKey() > toFix->getKey();
+        bool pside;
+        if (toFix->getParent()->getLeft() && toFix->getParent()->getLeft()->getValue() == toFix->getValue()){
+            pside = true;
+        }else{
+            pside = false;
+        }
         if (pside){
             parent->setLeft(rSon);
         } else{
@@ -449,6 +475,7 @@ int ContestantTree::getMin() {
 }
 
 NodeContestants * ContestantTree::strengthNewestPlayer(NodeContestants * ptr, int id) {
+    if (!ptr) return nullptr;
     if(!ptr->getRight() && !ptr->getLeft()) return nullptr;
     if((ptr->getRight() && ptr->getRight()->getValue() == id) || (ptr->getLeft() && ptr->getLeft()->getValue() == id)) return ptr;
     if(ptr->getRight() && ptr->getRight()->getNewestPlayer() == id) return strengthNewestPlayer(ptr->getRight(), id);
@@ -457,25 +484,24 @@ NodeContestants * ContestantTree::strengthNewestPlayer(NodeContestants * ptr, in
 
 
 StatusType ContestantTree::remove() {
-    NodeContestants * parent = strengthNewestPlayer(root, root->getNewestPlayer());
+    NodeContestants * parent = strengthNewestPlayer(root, (root? root->getNewestPlayer(): 0));
     NodeContestants * toRemove = nullptr;
     NodeContestants * startfix = nullptr;
-    int key;
+    bool pside;
     if (!parent){
         //if doesnt exist return failure
         if (!root) return StatusType::FAILURE;
         toRemove = root;
-        key = root->getKey();
     }
     else if (!parent->getLeft() && !parent->getRight()){
         return StatusType::FAILURE;
     }else{
         if(parent->getRight() && parent->getRight()->getNewestPlayer() == parent->getNewestPlayer()){
-            key = parent->getRight()->getKey();
+            pside = false;
             toRemove = parent->getRight();
         }
         else{
-            key = parent->getLeft()->getKey();
+            pside = true;
             toRemove = parent->getLeft();
         }
     }
@@ -486,7 +512,6 @@ StatusType ContestantTree::remove() {
         if (isRoot){
             root = nullptr;
         }else{
-            bool pside = parent->getKey() > key;
             if (pside){
                 parent->setLeft(nullptr);
             } else{
@@ -503,7 +528,6 @@ StatusType ContestantTree::remove() {
             root = replacement;
             replacement->setParent(nullptr);
         }else{
-            bool pside = parent->getKey() > key;
             if (pside){
                 parent->setLeft(replacement);
             }else{

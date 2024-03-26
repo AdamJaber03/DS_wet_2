@@ -129,6 +129,10 @@ StatusType TeamsTree::insert(pair<int, int> key, Team* value, int teamMedals) {
     if (!root){
         root = newNode;
         size++;
+        newNode->updateMedals(teamMedals);
+        newNode->updateSubTreeSize();
+        newNode->updateHeight();
+        newNode->updateMaxPowerSubTree();
         maxKey = root->getKey();
         minKey = root->getKey();
         return StatusType::SUCCESS;
@@ -354,7 +358,7 @@ StatusType TeamsTree::remove(pair<int, int> &key) {
             }
             replacement->setParent(parent);
         }
-        startfix = parent;
+        startfix = replacement;
         delete toRemove;
     } // toRemove has two sons
     else{
@@ -370,11 +374,18 @@ StatusType TeamsTree::remove(pair<int, int> &key) {
         NodeTeams * smlParent = curSmall->getParent(), *smlrSon = curSmall->getRight();
 
         // This is Medals correctness algorithm in removal
-        int toRemoveMedals = NumWins(key), curSmallMedals = NumWins(tempKey);
+        int toRemoveMedals = toRemove->getMedals(), curSmallMedals = curSmall->getMedals();
         toRemove->updateMedals(curSmallMedals - toRemoveMedals);
-        rson->updateMedals(toRemoveMedals - curSmallMedals);
+        if (!first){
+            rson->updateMedals(toRemoveMedals - curSmallMedals);
+            rson->updateMaxPowerSubTree();
+        }
         lson->updateMedals(toRemoveMedals - curSmallMedals);
-        if (smlrSon) smlrSon->updateMedals(curSmallMedals);
+        lson->updateMaxPowerSubTree();
+        if (smlrSon){
+            smlrSon->updateMedals(curSmallMedals);
+            smlrSon->updateMaxPowerSubTree();
+        }
 
         delete curSmall;
         toRemove->setKey(tempKey);
@@ -462,7 +473,8 @@ output_t<int> TeamsTree::playTournament(int lowPower, int highPower) {
     //at this point highest should contain the greatest node with power up to highPower
 
     int numTeams = getIndex(highest->getKey()) - getIndex(lowest->getKey()) + 1;
-    if (numTeams <= 1) return StatusType::FAILURE;  // if no tems in tournment or only 1 team
+    if (numTeams < 1) return StatusType::FAILURE;  // if no tems in tournment or only 1 team
+    if (numTeams == 1) return lowest->getKey().getP2();
     if ((numTeams & (numTeams - 1)) != 0) return StatusType::FAILURE;       //check if power of 2 with bitwise and. powers of two are 1000...
     int startInd = getIndex(lowest->getKey());
     int tot_medals = 0;

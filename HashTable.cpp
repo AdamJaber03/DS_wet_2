@@ -105,7 +105,11 @@ int TeamsHashTable::getSize() const {
     return size;
 }
 
-avl<int, Team*> TeamsHashTable::getTree(int i) {
-    return teams[i];
+int TeamsHashTable::getMaxSize() const {
+    return max_size;
+}
+
+avl<int, Team *> *TeamsHashTable::getTeams() {
+    return teams;
 }
 

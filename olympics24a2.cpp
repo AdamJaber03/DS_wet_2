@@ -6,10 +6,9 @@ olympics_t::olympics_t(): hashTeams(TeamsHashTable()), teamsTree(TeamsTree())
 
 olympics_t::~olympics_t()
 {
-    for(int i = 0; i < hashTeams.getSize(); i++){
-        avl<int, Team*> treeToRemove = hashTeams.getTree(i);
-        pair<int, Team*>* tempList = treeToRemove.getInorder();
-        for (int j = 0; j < treeToRemove.getSize(); ++j) {
+    for(int i = 0; i < hashTeams.getMaxSize(); i++){
+        pair<int, Team*>* tempList = hashTeams.getTeams()[i].getInorder();
+        for (int j = 0; j < hashTeams.getTeams()[i].getSize(); ++j) {
             delete tempList[j].getP2();
         }
         delete[] tempList;
@@ -93,7 +92,7 @@ output_t<int> olympics_t::play_match(int teamId1, int teamId2)
     Team * team1 = hashTeams.find(teamId1);
     Team * team2 = hashTeams.find(teamId2);
     if(!team1 || !team2 || !team1->getSize() || !team2->getSize()) return output_t<int>(StatusType::FAILURE);
-    return teamsTree.play_match(*(new pair<int, int>(team1->getStrength(), teamId1)), *(new pair<int, int>(team2->getStrength(), teamId2)));
+    return teamsTree.play_match(pair<int, int>(team1->getStrength(), teamId1), pair<int, int>(team2->getStrength(), teamId2));
 }
 
 output_t<int> olympics_t::num_wins_for_team(int teamId)

@@ -36,6 +36,7 @@ private:
     int findMax();
     int findMin();
     NodeContestants * findAux(int key);
+    NodeContestants * findAuxInsert(int key);
     void updateNewestPlayer(NodeContestants * toUpdate);
     void updateSumNodes(NodeContestants * toUpdate);
     void fixTree(NodeContestants * start);
