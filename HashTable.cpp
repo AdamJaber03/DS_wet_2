@@ -51,7 +51,7 @@ StatusType TeamsHashTable::updateSize() {
                     return status;
                 }
             }
-            delete tempList;
+            delete[] tempList;
         }
         //TODO - fix leaks start here
         delete[] teams;
