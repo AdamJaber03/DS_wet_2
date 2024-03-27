@@ -81,9 +81,9 @@ StatusType olympics_t::remove_newest_player(int teamId)
     teamsTree.remove(oldKey);
     team->setMedals(medals);
     if (team->getSize()){
-        teamsTree.insert(newKey, team, medals);
+        status = teamsTree.insert(newKey, team, medals);
     }
-	return StatusType::SUCCESS;
+	return status;
 }
 
 output_t<int> olympics_t::play_match(int teamId1, int teamId2)
@@ -131,9 +131,10 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
         teamsTree.remove(team1oldKey);
     }
     StatusType status = team1->unite(*team2);
+    if(status != StatusType::SUCCESS) return status;
     pair<int, int> team1newKey(team1->getStrength(), teamId1);
     if (team1->getSize()){
-        teamsTree.insert(team1newKey, team1, team1->getMedals());
+        status = teamsTree.insert(team1newKey, team1, team1->getMedals());
     }
     if (status != StatusType::SUCCESS) return status;
     delete team2;
@@ -142,7 +143,6 @@ StatusType olympics_t::unite_teams(int teamId1, int teamId2)
 
 output_t<int> olympics_t::play_tournament(int lowPower, int highPower)
 {
-    // TODO: check failure
     if (lowPower <= 0 || highPower <= 0 || lowPower >= highPower) return StatusType::INVALID_INPUT;
     return teamsTree.playTournament(lowPower, highPower);
 }

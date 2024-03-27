@@ -24,7 +24,7 @@ StatusType TeamsHashTable::remove(int id) {
     StatusType status = teams[index].remove(id);
     if(status != StatusType::SUCCESS) return status;
     size--;
-    updateSize();
+    status = updateSize();
     return status;
 }
 
@@ -42,7 +42,12 @@ StatusType TeamsHashTable::updateSize() {
             return StatusType::ALLOCATION_ERROR;
         }
         for (int i = 0; i < max_size/2; ++i) {
-            pair<int, Team*>* tempList = teams[i].getInorder();
+            pair<int, Team*>* tempList;
+            try {
+                tempList = teams[i].getInorder();
+            }catch (std::bad_alloc&){
+                return StatusType::ALLOCATION_ERROR;
+            }
             for (int j = 0; j < teams[i].getSize(); ++j) {
                 StatusType status = newlist[hashFunction(tempList[j].getP1())].insert(tempList[j].getP1(), tempList[j].getP2());
                 if (status != StatusType::SUCCESS){
@@ -71,7 +76,12 @@ StatusType TeamsHashTable::updateSize() {
             return StatusType::ALLOCATION_ERROR;
         }
         for (int i = 0; i < max_size*2; ++i) {
-            pair<int, Team*>* tempList = teams[i].getInorder();
+            pair<int, Team*>* tempList;
+            try {
+                tempList = teams[i].getInorder();
+            }catch (std::bad_alloc& ){
+                return StatusType::ALLOCATION_ERROR;
+            }
             for (int j = 0; j < teams[i].getSize(); ++j) {
                 StatusType status = newlist[hashFunction(tempList[j].getP1())].insert(tempList[j].getP1(), tempList[j].getP2());
                 if (status != StatusType::SUCCESS){
